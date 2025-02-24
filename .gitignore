@@ -1,5 +1,6 @@
 #local CLion files
 Cmake-build-debug
+CMakeLists.txt
 *.xml
 *.iml
 *.idea
