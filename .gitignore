@@ -3,6 +3,7 @@ Cmake-build-debug
 *.xml
 *.iml
 *.idea
+.gitattributes
 
 #executables
 *.exe
