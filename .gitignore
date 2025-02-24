@@ -1,0 +1,8 @@
+#local CLion files
+Cmake-build-debug
+*.xml
+*.iml
+*.idea
+
+#executables
+*.exe
