@@ -111,7 +111,7 @@ int Prisoner::lastId = 0;
 int Prisoner::amountOfPrisoners = 0;
 
 int main() {
-  Prisoner myBoy("A", "B", 5);\
+  Prisoner myBoy("A", "B", 5);
   Prisoner myPrisoner("AA", "BB");
 
   std::cout << myBoy.to_String() << myBoy.get_Days_Left() << std::endl;
