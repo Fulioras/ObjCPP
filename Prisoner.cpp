@@ -1,71 +1,68 @@
 // Created by Augustinas Bickaitis on 2025-02-24.
 
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 #include <string>
 #include <sstream>
 #include <cctype>
 #include <vector>
+#include <stdexcept>
+
+using namespace std;
+
+
+string name_formatter(string name){
+  for(int i = 0; i < name.length(); i++) {
+      if(name[i] >= 'a' && name[i] <= 'z') {
+        name[i] = toupper(name[i]);
+      }
+      else if(name[i] < 'A' || name[i] > 'Z') {
+        throw invalid_argument("Invalid simbols in prisoners name/surname");
+      }
+    }
+  return name;
+}
+
 
 class Prisoner{
 
-  private:
-    std::string name;
-    std::string surname;
+private:
+    string name;
+    string surname;
     int daysLeft = -1;
 
     int id;
     static int lastId ;
     static int amountOfPrisoners;
+
 public:
   /// CONSTRUCTOR
-  Prisoner (std::string name, std::string surname, int days_left) : id(++lastId) {
-    this->name = name_Format(name);
-    this->surname = name_Format(surname);
-    this->daysLeft = days_left;
+  Prisoner (string name, string surname, int days_left) : id(++lastId) {
+    set_name(name);
+    set_surname(surname);
+    set_days_left(daysLeft);
     amountOfPrisoners++;
   }
-  Prisoner(std::string name, std::string surname) : id(++lastId) {
-    this->name = name_Format(name);
-    this->surname = name_Format(surname);
-    this->daysLeft = -1;
+  Prisoner(string name, string surname) : id(++lastId) {
+    set_name(name);
+    set_surname(surname);
+    this->daysLeft = -1; /// an exeption
     amountOfPrisoners++;
   }
   /// DESTRUCTOR
   ~Prisoner() {
-    std::cout << this->to_String();
     amountOfPrisoners--;
   }
-private:
- /// METHODS
-  std::string name_Format(std:: string name) {
-    try {
-      for(int i = 0; i < name.length(); i++) {
-        if(name[i] >= 'a' && name[i] <= 'z') {
-          name[i] = std::toupper(name[i]);
-        }
-        else if(name[i] < 'A' || name[i] > 'Z') {
-          throw "Error";
-        }
-      }
-      return name;
-    }
-    catch (...) {
-      std::cerr<<"Name/Surname can only consist of latin letters" <<std::endl;
 
-    }
-    return name;
-  }
-
-  public:
+public:
   /// GETTERS
-      std::string get_Name(){
+      string get_name(){
         return name;
       }
-      std::string get_Surname(){
+      string get_surname(){
         return surname;
       }
-      int get_Days_Left(){
+      int get_days_left(){
         return daysLeft;
       }
 
@@ -73,37 +70,39 @@ private:
         return this->id;
       }
 
-      static int get_Prisoner_amount() {
+      static int get_prisoner_amount() {
         return amountOfPrisoners;
       }
 
 
   /// SETTERS
-      void change_Days_Left( int amount){
+      void set_name(string name){
+        this->name = name_formatter(name);
+      }
+
+      void set_surname(string surname){
+        this->surname = name_formatter(surname);
+      }
+
+
+
+      void change_days_left( int amount){
         this->daysLeft += amount;
         if (this->daysLeft < 0) {
           this->daysLeft = 0;
         }
       }
 
-      void set_Days_Left(int amount) {
-        try {
-          if(amount < 0)
-            throw "Error";
-
+      void set_days_left(int amount) {
           this->daysLeft = amount;
-
-        } catch (...) {
-          std::cerr<<"Days left must be positive or equal to zero"<<std::endl;
-        }
       }
   /// OTHERS
-      std::string to_String() {
+      string to_string() {
 
-        std::stringstream ss;
-        ss << this->get_Name() << ";" << this->get_Surname() << ";" << this->get_Days_Left()<< ";" << this->get_id() << std::endl;
-        std::string ass = ss.str();
-        return ass;
+        stringstream ss;
+        ss << this->get_name() << ";" << this->get_surname() << ";" << this->get_days_left()<< ";" << this->get_id() << endl;
+        string info = ss.str();
+        return info;
       }
 };
 
@@ -111,37 +110,45 @@ int Prisoner::lastId = 0;
 int Prisoner::amountOfPrisoners = 0;
 
 int main() {
-  Prisoner myBoy("A", "B", 5);
-  Prisoner myPrisoner("AA", "BB");
+  
+  try{
+    Prisoner myBoy("A", "B", 5);
+    Prisoner myPrisoner("AA", "BB");
 
-  std::cout << myBoy.to_String() << myBoy.get_Days_Left() << std::endl;
-  std::cout << myPrisoner.get_id() << std::endl;
+    cout << myBoy.to_string() << myBoy.get_days_left() << endl;
+    cout << myPrisoner.get_id() << endl;
 
-  myBoy.change_Days_Left(-61); ///checking setters
-  assert(myBoy.get_Days_Left() == 0);
-  myBoy.change_Days_Left(61);
-  assert(myBoy.get_Days_Left() == 61);
+    myBoy.change_days_left(-61); ///checking setters
+    assert(myBoy.get_days_left() == 0);
+    myBoy.change_days_left(61);
+    assert(myBoy.get_days_left() == 61);
 
-  myBoy.set_Days_Left(-5);/// shows error message
+    myBoy.set_days_left(-5);/// shows error message
 
-  assert(Prisoner::get_Prisoner_amount() == 2); //checking static
+    assert(Prisoner::get_prisoner_amount() == 2); //checking static
+    
 
-  std::vector<Prisoner*> brothers;
-  brothers.push_back(new Prisoner( "name", "surname", 7));
-  brothers.push_back(new Prisoner( "vardas", "pavarde"));
+    vector<Prisoner*> brothers;
+    brothers.push_back(new Prisoner( "name", "surname", 7));
+    brothers.push_back(new Prisoner( "vardas", "pavarde"));
 
-  assert(Prisoner::get_Prisoner_amount() == brothers[1]->get_id()); /// Created 4 objects and id is also 4
+    assert(Prisoner::get_prisoner_amount() == brothers[1]->get_id()); /// Created 4 objects and id is also 4
 
-  for(auto prisoner : brothers) {
-    delete prisoner;
+    for(auto prisoner : brothers) {
+      delete prisoner;
+    }
+    assert(Prisoner::get_prisoner_amount() == 2);
+
+    brothers.push_back(new Prisoner( "1nom", "prenom"));
+    assert(brothers[2]->get_id() == 5);
+    delete brothers[2]; /// vector 0 and 1 spots are still taken up by the deleted prisoner objects is this normalna?
+    brothers.clear();
   }
-  assert(Prisoner::get_Prisoner_amount() == 2);
-
-  brothers.push_back(new Prisoner( "nom", "prenom"));
-  assert(brothers[0]->get_id() == 5);
-  delete brothers[0];
-  brothers.clear();
-
+  catch(invalid_argument& e){
+    cerr << e.what() << endl;
+  }
+  assert(Prisoner::get_prisoner_amount() == 0);
+  cout << "Everything finished!";
 
 return 0;
 }
