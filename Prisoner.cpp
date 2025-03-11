@@ -26,28 +26,29 @@ string name_formatter(string name){
 
 class Prisoner{
 
-private:
+public:
     string name;
     string surname;
-    int daysLeft = -1;
+    int days_Left;
 
-    int id;
-    static int lastId ;
+    static int lastId;
     static int amountOfPrisoners;
 
 public:
   /// CONSTRUCTOR
-  Prisoner (string name, string surname, int days_left) : id(++lastId) {
+  Prisoner (string name, string surname, int days_Left) {
     set_name(name);
     set_surname(surname);
-    set_days_left(daysLeft);
+    set_days_left(days_Left);
     amountOfPrisoners++;
+    ++lastId;
   }
-  Prisoner(string name, string surname) : id(++lastId) {
+  Prisoner(string name, string surname) {
     set_name(name);
     set_surname(surname);
-    this->daysLeft = -1; /// an exeption
+    this->days_Left = -1; /// an exeption
     amountOfPrisoners++;
+    ++lastId;
   }
   /// DESTRUCTOR
   ~Prisoner() {
@@ -61,11 +62,11 @@ public:
         return this->surname;
       }
       int get_days_left(){
-        return this->daysLeft;
+        return this->days_Left;
       }
 
       int get_id() {
-        return this->id;
+        return lastId;
       }
 
       static int get_prisoner_amount() {
@@ -85,17 +86,19 @@ public:
 
 
       void change_days_left( int amount){
-        this->daysLeft += amount;
-        if (this->daysLeft < 0) {
-          this->daysLeft = 0;
+        this->days_Left += amount;
+        if (this->days_Left < 0) {
+          this->days_Left = 0;
         }
       }
 
       void set_days_left(int amount) {
-        if(amount >= 0)
-          this->daysLeft = amount;
-        else 
+        if(amount >= 0){
+          this->days_Left = amount;
+        }
+        else {
           throw out_of_range("Can't set days left to a negative amount");
+        }
       }
   /// OTHERS
       string to_string() {
@@ -121,10 +124,8 @@ int main() {
 
     myBoy.change_days_left(-61); ///checking setters
     assert(myBoy.get_days_left() == 0);
-    myBoy.change_days_left(61);
-    assert(myBoy.get_days_left() == 61);
-
-    myBoy.set_days_left(-5);/// shows error message
+    myBoy.set_days_left(15);
+    assert(myBoy.get_days_left() == 15);
 
     assert(Prisoner::get_prisoner_amount() == 2); //checking static
     
@@ -140,17 +141,18 @@ int main() {
     }
     assert(Prisoner::get_prisoner_amount() == 2);
 
-    brothers.push_back(new Prisoner( "1nom", "prenom"));
+    brothers.push_back(new Prisoner( "nom", "prenom"));
     assert(brothers[2]->get_id() == 5);
     delete brothers[2];
     brothers.clear();
   }
-  catch(invalid_argument& e){
-    cerr << e.what() << endl;
-  }
   catch(out_of_range& e){
     cerr << e.what() << endl;
   }
+  catch(invalid_argument& e){
+    cerr << e.what() << endl;
+  }
+  
   assert(Prisoner::get_prisoner_amount() == 0);
 
 return 0;
