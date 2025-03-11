@@ -148,7 +148,6 @@ int main() {
     cerr << e.what() << endl;
   }
   assert(Prisoner::get_prisoner_amount() == 0);
-  cout << "Everything finished!";
-
+  
 return 0;
 }
