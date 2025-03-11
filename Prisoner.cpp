@@ -53,17 +53,15 @@ public:
   ~Prisoner() {
     amountOfPrisoners--;
   }
-
-public:
   /// GETTERS
       string get_name(){
-        return name;
+        return this->name;
       }
       string get_surname(){
-        return surname;
+        return this->surname;
       }
       int get_days_left(){
-        return daysLeft;
+        return this->daysLeft;
       }
 
       int get_id() {
@@ -94,7 +92,10 @@ public:
       }
 
       void set_days_left(int amount) {
+        if(amount >= 0)
           this->daysLeft = amount;
+        else 
+          throw out_of_range("Can't set days left to a negative amount");
       }
   /// OTHERS
       string to_string() {
@@ -141,13 +142,16 @@ int main() {
 
     brothers.push_back(new Prisoner( "1nom", "prenom"));
     assert(brothers[2]->get_id() == 5);
-    delete brothers[2]; /// vector 0 and 1 spots are still taken up by the deleted prisoner objects is this normalna?
+    delete brothers[2];
     brothers.clear();
   }
   catch(invalid_argument& e){
     cerr << e.what() << endl;
   }
+  catch(out_of_range& e){
+    cerr << e.what() << endl;
+  }
   assert(Prisoner::get_prisoner_amount() == 0);
-  
+
 return 0;
 }
