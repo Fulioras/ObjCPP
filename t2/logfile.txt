@@ -1,0 +1,21 @@
+~~~~~Testing adding to a tree:
+~Creating tree with one node
+~Adding 100 diffrent nodes
+~Node addition complete
+Total nodes in MerkleNode instances: 198
+MerkleNode instances out of bounds: 0
+~~~~~Addition testing - PASSED
+
+~~~~~Testing get_static() functionality:
+~Initializing tree and adding 3 elements
+~Making a static tree from the original
+~Comparing manually created root hash with the static tree root hash
+Both hashes are the same (correct behaviour)
+608183e8a9f7b17429ddb5f42f287ec960275f7ec17796e3f4e6ad986a0da9ab<-- manual hash
+608183e8a9f7b17429ddb5f42f287ec960275f7ec17796e3f4e6ad986a0da9ab<-- static tree hash
+Instance count before: 6
+Instance count out of bounds: 0
+~~~~~get_static() functionality - PASSED
+
+
+SUCCESS
