@@ -1,30 +1,21 @@
-[Added]: Alpha
-[Added]: Bravo
-[Added]: Charlie
-== Snapshot after 3 additions ==
-Root hash: 875bc135890ce78e3c80cfe1f193e978cdfe5e17975146694d761c59edf88f47
-Tree height: 2
-Tree size: 4
+===== MerkleContainer Test Start =====
+Adding elements to MerkleContainer...
+Added: alpha
+Added: beta
+Added: gamma
+Added: delta
+Tree size after additions: 4
+Is tree empty? No
+Snapshot1 Root Hash: f01118b89fd3e0a850206b08551223f329a0d02a31bdddb0296392123323dbda
+Snapshot1 Height: 2
 
-[Added]: Delta
-[Added]: Echo
-[Added]: Foxtrot
-== Snapshot after 6 additions ==
-Root hash: f303fa9e76b8e3a5a118ef8b4ca03a195273b5c07801616ff136da2b1f0d98a5
-Tree height: 3
-Tree size: 8
+Adding more elements...
+Snapshot2 Root Hash: 28a0860a4e33e616b9487e7d14d3912a22dfdcc19d59d9cc37970ee8cc075115
+Snapshot2 Height: 3
+PASS: Snapshots have different root hashes after modification.
 
-[Added]: Golf
-[Added]: Hotel
-[Added]: India
-== Snapshot after 9 additions ==
-Root hash: f983a420453c80b9c4b3b62147e5a74f1c3c31851e5048f816591c4c127e3fcb
-Tree height: 4
-Tree size: 16
+Adding duplicates to check hash uniqueness...
+Snapshot3 Root Hash (with duplicate 'alpha'): a2ff1271b346b1d8f8e4a4dd8cfd9af07301aa8cf3063296426db4ee552b0aa2
+PASS: Duplicate data alters the tree as expected.
 
-[Added]: Juliet
-Container empty? No
-Total elements added: 10
-
-Final tree root hash: 353956e6180cfaf96ee5d3dc7a5c85ffdacfc6d55f7c2a564281a96605baefef
-Total MerkleNode instances alive: Test completed. Remaining MerkleNode count: 
+===== MerkleContainer Test Complete =====

@@ -26,102 +26,80 @@ namespace MyMerkle{
 
 //~~~~~~~~~~~~~~~~~node implementation
 
-class MerkleNode {
-private:
-    static int counter;
-    std::string hash;
-    std::shared_ptr<MerkleNode> left;
-    std::shared_ptr<MerkleNode> right;
-    int height = 0;
+	class MerkleNode {
+	private:
+	    static int counter;
+	    std::string hash;
+	    std::shared_ptr<MerkleNode> left;
+	    std::shared_ptr<MerkleNode> right;
+	    int height = 0;
 
-public:
-    // Leaf constructor
-    MerkleNode(const std::string& data)
-        : hash(sha256(data)), left(nullptr), right(nullptr), height(0) {
-        ++counter;
-    }
+	public:
+		//Constructors
+	    MerkleNode(const std::string& data)
+	        : hash(sha256(data)), left(nullptr), right(nullptr), height(0) {
+	        ++counter;
+	    }
 
-    // Internal node constructor
-    MerkleNode(std::shared_ptr<MerkleNode> l, std::shared_ptr<MerkleNode> r)
-        : left(std::move(l)), right(std::move(r)) {
-        if (!left || !right) {
-            throw MerkleExcept("Cannot create internal MerkleNode with null children.");
-        }
-        hash = sha256(left->get_hash() + right->get_hash());
-        height = std::max(left->get_height(), right->get_height()) + 1;
-        ++counter;
-    }
+	    MerkleNode(std::shared_ptr<MerkleNode> l, std::shared_ptr<MerkleNode> r)
+	        : left(std::move(l)), right(std::move(r)) {
+	        if (!left || !right) {
+	            throw MerkleExcept("Cannot create internal MerkleNode with null children.");
+	        }
+	        hash = sha256(left->get_hash() + right->get_hash());
+	        height = std::max(left->get_height(), right->get_height()) + 1;
+	        ++counter;
+	    }
 
-    // Copy constructor from shared_ptr
-    MerkleNode(const std::shared_ptr<MerkleNode>& other) {
-        if (!other) throw std::invalid_argument("Can't copy from null node.");
+	    MerkleNode(const std::shared_ptr<MerkleNode>& other) {
+	        if (!other) throw std::invalid_argument("Can't copy from null node.");
 
-        hash = other->get_hash();
-        height = other->get_height();
-        if (height > 0) {
-            left = std::make_shared<MerkleNode>(other->get_left());
-            right = std::make_shared<MerkleNode>(other->get_right());
-        }
-        ++counter;
-    }
+	        hash = other->get_hash();
+	        height = other->get_height();
+	        if (height > 0) {
+	            left = std::make_shared<MerkleNode>(other->get_left());
+	            right = std::make_shared<MerkleNode>(other->get_right());
+	        }
+	        ++counter;
+	    }
 
-    // Copy constructor
-    MerkleNode(const MerkleNode& other)
-        : hash(other.hash), height(other.height) {
-        left = other.left ? std::make_shared<MerkleNode>(*other.left) : nullptr;
-        right = other.right ? std::make_shared<MerkleNode>(*other.right) : nullptr;
-        ++counter;
-    }
+	    MerkleNode(const MerkleNode& other)
+	        : hash(other.hash), height(other.height) {
+	        left = other.left ? std::make_shared<MerkleNode>(*other.left) : nullptr;
+	        right = other.right ? std::make_shared<MerkleNode>(*other.right) : nullptr;
+	        ++counter;
+	    }
 
-    // Destructor
-    ~MerkleNode() {
-        --counter;
-    }
+	    // Destructor
+	    ~MerkleNode() {
+	        --counter;
+	    }
 
-    // Assignment operator
-    MerkleNode& operator=(const MerkleNode& other) {
-        if (this != &other) {
-            hash = other.hash;
-            height = other.height;
-            left = other.left ? std::make_shared<MerkleNode>(*other.left) : nullptr;
-            right = other.right ? std::make_shared<MerkleNode>(*other.right) : nullptr;
-        }
-        return *this;
-    }
+	    // Getters
+	    std::string get_hash() const {
+	        return hash;
+	    }
 
-    // Equality operators
-    bool operator==(const MerkleNode& other) const {
-        return hash == other.hash && height == other.height;
-    }
+	    std::shared_ptr<MerkleNode> get_left() const {
+	        return left;
+	    }
 
-    bool operator!=(const MerkleNode& other) const {
-        return !(*this == other);
-    }
+	    std::shared_ptr<MerkleNode> get_right() const {
+	        return right;
+	    }
 
-    // Accessors
-    std::string get_hash() const {
-        return hash;
-    }
+	    int get_height() const {
+	        return height;
+	    }
 
-    std::shared_ptr<MerkleNode> get_left() const {
-        return left;
-    }
+	    static int get_count() {
+	        return counter;
+	    }
+	};
 
-    std::shared_ptr<MerkleNode> get_right() const {
-        return right;
-    }
+	// Initialize static member
+	int MerkleNode::counter = 0;
 
-    int get_height() const {
-        return height;
-    }
-
-    static int get_count() {
-        return counter;
-    }
-};
-
-// Initialize static member
-int MerkleNode::counter = 0;
 //~~~~~~~~~~~~~~~~Tree implementation
 	class MerkleTree::Impl {
 	private:
@@ -231,7 +209,7 @@ int MerkleNode::counter = 0;
 
 		// makes a normal MerkleContainer(full binary tree) by filling all empty 
 		//tree branches with the smallest tree inside the stack.
-		std::shared_ptr<MerkleNode> get_tree(){
+		std::shared_ptr<MerkleNode> get_root(){
 			if (roots.empty()) {
 	        	throw MerkleExcept("Cannot get root hash of an empty Merkle Tree.");
 	    	}
@@ -339,7 +317,7 @@ int MerkleNode::counter = 0;
 	}
 
 	MerkleTree MerkleContainer::get_tree() const{
-    	return MerkleTree(pImpl->get_tree(), pImpl->get_tree_size());
+    	return MerkleTree(pImpl->get_root(), pImpl->get_tree_size());
 	}
 
 } // namespace MyMerkle

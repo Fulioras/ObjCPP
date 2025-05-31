@@ -1,60 +1,66 @@
 #include "MerkleContainer.h"
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <vector>
-#include <string>
 
 using namespace MyMerkle;
 
-void print_tree_info(std::ostream& out, const MerkleTree& tree, const std::string& label) {
-    out << "== " << label << " ==\n";
-    out << "Root hash: " << tree.get_root_hash() << '\n';
-    out << "Tree height: " << tree.get_height() << '\n';
-    out << "Tree size: " << tree.get_size() << "\n\n";
+void log(std::ofstream& out, const std::string& message) {
+    std::cout << message << std::endl;
+    out << message << std::endl;
 }
 
 int main() {
-    std::ofstream out("logfile.txt");
-    if (!out.is_open()) {
-        std::cerr << "Failed to open output file.\n";
+    std::ofstream logfile("logfile.txt");
+    if (!logfile.is_open()) {
+        std::cerr << "Failed to open logfile.txt" << std::endl;
         return 1;
     }
 
-    try {
-        std::vector<std::string> inputs = {
-            "Alpha", "Bravo", "Charlie", "Delta", "Echo",
-            "Foxtrot", "Golf", "Hotel", "India", "Juliet"
-        };
+    log(logfile, "===== MerkleContainer Test Start =====");
 
-        MerkleContainer container;
+    MerkleContainer tree;
 
-        for (size_t i = 0; i < inputs.size(); ++i) {
-            container.add(inputs[i]);
-            out << "[Added]: " << inputs[i] << '\n';
-
-            if ((i + 1) % 3 == 0) {
-                auto snapshot = container.get_tree();
-                print_tree_info(out, snapshot, "Snapshot after " + std::to_string(i + 1) + " additions");
-            }
-        }
-
-        out << "Container empty? " << (container.empty() ? "Yes" : "No") << '\n';
-        out << "Total elements added: " << container.get_size() << "\n\n";
-
-        std::string finalTreeHash = container.get_tree().get_root_hash();
-        out << "Final tree root hash: " << finalTreeHash << '\n';
-
-        out << "Total MerkleNode instances alive: ";// << MerkleNode::get_count() << "\n";
-
-    } catch (const MerkleExcept& e) {
-        out << "MerkleExcept: " << e.what() << '\n';
-    } catch (const std::exception& e) {
-        out << "Standard exception: " << e.what() << '\n';
-    } catch (...) {
-        out << "Unknown exception occurred.\n";
+    log(logfile, "Adding elements to MerkleContainer...");
+    std::vector<std::string> inputs = {"alpha", "beta", "gamma", "delta"};
+    for (const auto& input : inputs) {
+        tree.add(input);
+        log(logfile, "Added: " + input);
     }
 
-    out << "Test completed. Remaining MerkleNode count: ";// << MerkleNode::get_count() << '\n';
-    out.close();
+    log(logfile, "Tree size after additions: " + std::to_string(tree.get_size()));
+    log(logfile, "Is tree empty? " + std::string(tree.empty() ? "Yes" : "No"));
+
+    MerkleTree snapshot1 = tree.get_tree();
+    log(logfile, "Snapshot1 Root Hash: " + snapshot1.get_root_hash());
+    log(logfile, "Snapshot1 Height: " + std::to_string(snapshot1.get_height()));
+
+    log(logfile, "\nAdding more elements...");
+    tree.add("epsilon");
+    tree.add("zeta");
+
+    MerkleTree snapshot2 = tree.get_tree();
+    log(logfile, "Snapshot2 Root Hash: " + snapshot2.get_root_hash());
+    log(logfile, "Snapshot2 Height: " + std::to_string(snapshot2.get_height()));
+
+    if (snapshot1.get_root_hash() != snapshot2.get_root_hash()) {
+        log(logfile, "PASS: Snapshots have different root hashes after modification.");
+    } else {
+        log(logfile, "FAIL: Snapshots should not have the same root hash.");
+    }
+
+    log(logfile, "\nAdding duplicates to check hash uniqueness...");
+    tree.add("alpha");
+    MerkleTree snapshot3 = tree.get_tree();
+    log(logfile, "Snapshot3 Root Hash (with duplicate 'alpha'): " + snapshot3.get_root_hash());
+
+    if (snapshot2.get_root_hash() != snapshot3.get_root_hash()) {
+        log(logfile, "PASS: Duplicate data alters the tree as expected.");
+    } else {
+        log(logfile, "FAIL: Duplicate data should alter the root hash.");
+    }
+
+    log(logfile, "\n===== MerkleContainer Test Complete =====");
+    logfile.close();
     return 0;
 }
