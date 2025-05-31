@@ -158,6 +158,29 @@ namespace MyMerkle{
 	    return pImpl->root->get_hash();
 	}
 
+	std::string MerkleTree::get_hash(unsigned int depth, unsigned int number) const{
+		auto current = pImpl->root;
+	    if (depth > (unsigned int)current->get_height()) {
+	        throw MerkleExcept("Requested depth exceeds tree height.");
+	    }
+
+	    unsigned int maxNodesAtDepth = 1 << depth; // 2^depth
+	    if (number >= maxNodesAtDepth) {
+	        throw MerkleExcept("Invalid node index at given depth.");
+	    }
+
+	    for (unsigned int d = 0; d < depth; ++d) {
+	        int bit = (number >> (depth - d - 1)) & 1;
+	        if (bit == 0) {
+	            current = current->get_left();
+	        } else {
+	            current = current->get_right();
+	        }
+		}	
+
+		return current->get_hash();
+	}
+
 	int MerkleTree::get_height() const {
 	    return pImpl->root->get_height();
 	}

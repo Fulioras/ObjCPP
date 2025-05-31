@@ -10,7 +10,6 @@
 
 #include <memory> //shared and unique ptr
 #include <iomanip> // hex function for line formating
-#include <cmath>  // for pow()
 #include <stack>
 #include <string>
 #ifndef OPEN_SSL
@@ -51,6 +50,8 @@ class MerkleTree {
 		bool operator!=(const MerkleTree& other);
 	    
 	    std::string get_root_hash() const;
+	    //depth = 0; root, number - index is node left-to-right
+	    std::string get_hash(unsigned int depth, unsigned int number) const;
 	    int get_height() const; // 0 if only root node
 	    int get_size() const;
 

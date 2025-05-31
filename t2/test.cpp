@@ -19,27 +19,42 @@ int main() {
 
     log(logfile, "===== MerkleContainer Test Start =====");
 
-    MerkleContainer tree;
+    MerkleContainer container;
 
     log(logfile, "Adding elements to MerkleContainer...");
     std::vector<std::string> inputs = {"alpha", "beta", "gamma", "delta"};
     for (const auto& input : inputs) {
-        tree.add(input);
+        container.add(input);
         log(logfile, "Added: " + input);
     }
 
-    log(logfile, "Tree size after additions: " + std::to_string(tree.get_size()));
-    log(logfile, "Is tree empty? " + std::string(tree.empty() ? "Yes" : "No"));
+    log(logfile, "Container size after additions: " + std::to_string(container.get_size()));
+    log(logfile, "Is Container empty? " + std::string(container.empty() ? "Yes" : "No"));
 
-    MerkleTree snapshot1 = tree.get_tree();
+    MerkleTree snapshot1 = container.get_tree();
     log(logfile, "Snapshot1 Root Hash: " + snapshot1.get_root_hash());
     log(logfile, "Snapshot1 Height: " + std::to_string(snapshot1.get_height()));
 
-    log(logfile, "\nAdding more elements...");
-    tree.add("epsilon");
-    tree.add("zeta");
+    log(logfile, "Snapshot1 node hashes by depth:");
+    int maxDepth = snapshot1.get_height();
+    for (int depth = 0; depth <= maxDepth; ++depth) {
+        int count = 1 << depth; // 2^depth, can be replaced with pow(2, depth) if needed.
+        log(logfile, "Depth " + std::to_string(depth) + ":");
+        for (int i = 0; i < count; ++i) {
+            try {
+                std::string hash = snapshot1.get_hash(depth, i);
+                log(logfile, "  Node " + std::to_string(i) + ": " + hash);
+            } catch (const MerkleExcept& e) {
+                std::cout << "  Node " << i << ": " << e.what() << "\n";
+            }
+        }
+    }
 
-    MerkleTree snapshot2 = tree.get_tree();
+    log(logfile, "\nAdding more elements...");
+    container.add("epsilon");
+    container.add("zeta");
+
+    MerkleTree snapshot2 = container.get_tree();
     log(logfile, "Snapshot2 Root Hash: " + snapshot2.get_root_hash());
     log(logfile, "Snapshot2 Height: " + std::to_string(snapshot2.get_height()));
 
@@ -50,8 +65,8 @@ int main() {
     }
 
     log(logfile, "\nAdding duplicates to check hash uniqueness...");
-    tree.add("alpha");
-    MerkleTree snapshot3 = tree.get_tree();
+    container.add("alpha");
+    MerkleTree snapshot3 = container.get_tree();
     log(logfile, "Snapshot3 Root Hash (with duplicate 'alpha'): " + snapshot3.get_root_hash());
 
     if (snapshot2.get_root_hash() != snapshot3.get_root_hash()) {

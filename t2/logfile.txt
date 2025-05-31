@@ -4,10 +4,21 @@ Added: alpha
 Added: beta
 Added: gamma
 Added: delta
-Tree size after additions: 4
-Is tree empty? No
+Container size after additions: 4
+Is Container empty? No
 Snapshot1 Root Hash: f01118b89fd3e0a850206b08551223f329a0d02a31bdddb0296392123323dbda
 Snapshot1 Height: 2
+Snapshot1 node hashes by depth:
+Depth 0:
+  Node 0: f01118b89fd3e0a850206b08551223f329a0d02a31bdddb0296392123323dbda
+Depth 1:
+  Node 0: 0cb0309affcf4f994813ec26b8afc7e0b758605a04641de9871e04363de5e6b8
+  Node 1: 38bcf2c9b11872705dfc09efff31b9de61d9223ddbd1cc1b91758b844789e2de
+Depth 2:
+  Node 0: 8ed3f6ad685b959ead7022518e1af76cd816f8e8ec7ccdda1ed4018e8f2223f8
+  Node 1: f44e64e75f3948e9f73f8dfa94721c4ce8cbb4f265c4790c702b2d41cfbf2753
+  Node 2: be9d587defa1f0c09ef49eb17e206983a5f8f8289e4281860bd0ee5a19592c67
+  Node 3: 4f4a9410ffcdf895c4adb880659e9b5c0dd1f23a30790684340b3eaacb045398
 
 Adding more elements...
 Snapshot2 Root Hash: 28a0860a4e33e616b9487e7d14d3912a22dfdcc19d59d9cc37970ee8cc075115

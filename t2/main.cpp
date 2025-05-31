@@ -20,6 +20,21 @@ int main() {
     std::cout << "Snapshot1 Height: " << snapshot1.get_height() << std::endl;
     std::cout << "Snapshot1 Root Hash: " << snapshot1.get_root_hash() << std::endl;
 
+    // Print tree node hashes
+    int maxDepth = snapshot1.get_height();
+    for (int depth = 0; depth <= maxDepth; ++depth) {
+        int count = 1 << depth; // 2^depth, can be replaced with pow(2, depth) if needed.
+        std::cout << "Depth " << depth << ":\n";
+        for (int i = 0; i < count; ++i) {
+            try {
+                std::string hash = snapshot1.get_hash(depth, i);
+                std::cout << "  Node " << i << ": " << hash << "\n";
+            } catch (const MerkleExcept& e) {
+                std::cout << "  Node " << i << ": " << e.what() << "\n";
+            }
+        }
+    }
+
     // Add more data
     tree->add("date");
     tree->add("elderberry");
