@@ -60,6 +60,7 @@ delete tree; // Don't forget to free memory.
 
 namespace MyMerkle{
 
+//~~~~~~~~~~HASHING~~~~~~~~~~~~
 	std::string sha256(const std::string& );// Hashing function from OpenSSl
 
 //~~~~~~~~~~EXCEPTION~~~~~~
@@ -68,32 +69,7 @@ namespace MyMerkle{
         explicit MerkleExcept(const std::string& msg);
     };
 //~~~~~~~~~~~~~NODE~~~~~~~~~~
-class MerkleNode {
-	public:
-		MerkleNode(const std::string& data); // creates a 0 height node from an input
-		MerkleNode(std::shared_ptr<MerkleNode> l, std::shared_ptr<MerkleNode> r); //creates new node based on its left and right nodes
-		
-		MerkleNode(const MerkleNode& other);
-		MerkleNode(const std::shared_ptr<MerkleNode>&); //Deep-copy
-
-		~MerkleNode();
-		
-	    MerkleNode& operator=(const MerkleNode&);
-	    bool operator==(const MerkleNode& other);
-	    bool operator!=(const MerkleNode& other);
-
-		std::string get_hash() const;
-		std::shared_ptr<MerkleNode> get_left() const;
-		std::shared_ptr<MerkleNode> get_right() const;
-		int get_height() const; // 0 if node has no children
-		static int get_count();
-		//std::shared_ptr<MerkleNode> clone() const;
-
-
-	private:
-		class Impl;
-		std::unique_ptr<Impl> pImpl;
-	};
+class MerkleNode;
 //~~~~~~~~~~~~~~Tree~~~~~~~~
 class MerkleTree {
 	public:
