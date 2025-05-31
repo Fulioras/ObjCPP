@@ -1,21 +1,30 @@
-~~~~~Testing adding to a tree:
-~Creating tree with one node
-~Adding 100 diffrent nodes
-~Node addition complete
-Total nodes in MerkleNode instances: 198
-MerkleNode instances out of bounds: 0
-~~~~~Addition testing - PASSED
+[Added]: Alpha
+[Added]: Bravo
+[Added]: Charlie
+== Snapshot after 3 additions ==
+Root hash: 875bc135890ce78e3c80cfe1f193e978cdfe5e17975146694d761c59edf88f47
+Tree height: 2
+Tree size: 4
 
-~~~~~Testing get_static() functionality:
-~Initializing tree and adding 3 elements
-~Making a static tree from the original
-~Comparing manually created root hash with the static tree root hash
-Both hashes are the same (correct behaviour)
-608183e8a9f7b17429ddb5f42f287ec960275f7ec17796e3f4e6ad986a0da9ab<-- manual hash
-608183e8a9f7b17429ddb5f42f287ec960275f7ec17796e3f4e6ad986a0da9ab<-- static tree hash
-Instance count before: 6
-Instance count out of bounds: 0
-~~~~~get_static() functionality - PASSED
+[Added]: Delta
+[Added]: Echo
+[Added]: Foxtrot
+== Snapshot after 6 additions ==
+Root hash: f303fa9e76b8e3a5a118ef8b4ca03a195273b5c07801616ff136da2b1f0d98a5
+Tree height: 3
+Tree size: 8
 
+[Added]: Golf
+[Added]: Hotel
+[Added]: India
+== Snapshot after 9 additions ==
+Root hash: f983a420453c80b9c4b3b62147e5a74f1c3c31851e5048f816591c4c127e3fcb
+Tree height: 4
+Tree size: 16
 
-SUCCESS
+[Added]: Juliet
+Container empty? No
+Total elements added: 10
+
+Final tree root hash: 353956e6180cfaf96ee5d3dc7a5c85ffdacfc6d55f7c2a564281a96605baefef
+Total MerkleNode instances alive: Test completed. Remaining MerkleNode count: 

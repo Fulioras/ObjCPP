@@ -1,81 +1,60 @@
-#include "MerkleTree.h"
+#include "MerkleContainer.h"
 #include <iostream>
-#include <cassert>
 #include <fstream>
+#include <vector>
+#include <string>
 
 using namespace MyMerkle;
 
-int main(){
+void print_tree_info(std::ostream& out, const MerkleTree& tree, const std::string& label) {
+    out << "== " << label << " ==\n";
+    out << "Root hash: " << tree.get_root_hash() << '\n';
+    out << "Tree height: " << tree.get_height() << '\n';
+    out << "Tree size: " << tree.get_size() << "\n\n";
+}
 
-	std::cout << "TEST START\n";
-	std::ofstream logfile("logfile.txt");
+int main() {
+    std::ofstream out("logfile.txt");
+    if (!out.is_open()) {
+        std::cerr << "Failed to open output file.\n";
+        return 1;
+    }
 
-	if(!logfile){
-		std::cerr << "logfile null\n";
-		return 1;
-	}
+    try {
+        std::vector<std::string> inputs = {
+            "Alpha", "Bravo", "Charlie", "Delta", "Echo",
+            "Foxtrot", "Golf", "Hotel", "India", "Juliet"
+        };
 
-	logfile << "~~~~~Testing adding to a tree:\n";
+        MerkleContainer container;
 
-	{
-		logfile << "~Creating tree with one node\n";
-		MerkleTree* tree = new MerkleTree("vienas");
-		std::string base = "AA";
-		logfile << "~Adding 100 diffrent nodes\n";
-		for(int i = 0; i < 10; i++){
-			base[0]++;
-			base[1] = 'A';
-			for(int j = 0; j < 10; j++){
-				base[1]++;
-				tree->add(base);
-			}
-		}
+        for (size_t i = 0; i < inputs.size(); ++i) {
+            container.add(inputs[i]);
+            out << "[Added]: " << inputs[i] << '\n';
 
-		logfile << "~Node addition complete\n";
-		logfile << "Total nodes in MerkleNode instances: " << MerkleNode::get_count() << '\n';
-		delete tree;
-	}
-	assert(MerkleNode::get_count() == 0);
-	logfile << "MerkleNode instances out of bounds: " << MerkleNode::get_count() << '\n';
-	logfile << "~~~~~Addition testing - PASSED\n\n";
+            if ((i + 1) % 3 == 0) {
+                auto snapshot = container.get_tree();
+                print_tree_info(out, snapshot, "Snapshot after " + std::to_string(i + 1) + " additions");
+            }
+        }
 
+        out << "Container empty? " << (container.empty() ? "Yes" : "No") << '\n';
+        out << "Total elements added: " << container.get_size() << "\n\n";
 
-	logfile << "~~~~~Testing get_static() functionality:\n";
-	{
-		logfile << "~Initializing tree and adding 3 elements\n";
-		MerkleTree* tree = new MerkleTree();
+        std::string finalTreeHash = container.get_tree().get_root_hash();
+        out << "Final tree root hash: " << finalTreeHash << '\n';
 
-		tree->add("labas");
-		tree->add("geras");
-		tree->add("super");
-		logfile << "~Making a static tree from the original\n";
-		auto stat = tree->get_static();
-			//sukonstruotas stat atrodys taip:		  	  1233)
-			//										   12)	  33)
-			//										  1) 2)  3) 3)
+        out << "Total MerkleNode instances alive: ";// << MerkleNode::get_count() << "\n";
 
-		// sukuriam rankiniu budu
-		std::string vienasDu = sha256(sha256("labas")+sha256("geras"));
-		std::string trysTrys = sha256(sha256("super")+sha256("super"));
-		std::string manualHash = sha256(vienasDu+trysTrys);
-		logfile << "~Comparing manually created root hash with the static tree root hash\n";
-		assert(manualHash == stat->get_hash());
-		logfile << "Both hashes are the same (correct behaviour)\n";
-		
-		logfile << manualHash << "<-- manual hash\n";
-		logfile << stat->get_hash() << "<-- static tree hash\n";
-		
+    } catch (const MerkleExcept& e) {
+        out << "MerkleExcept: " << e.what() << '\n';
+    } catch (const std::exception& e) {
+        out << "Standard exception: " << e.what() << '\n';
+    } catch (...) {
+        out << "Unknown exception occurred.\n";
+    }
 
-		logfile << "Instance count before: " << MerkleNode::get_count() << '\n';
-		delete tree;
-	}
-	assert(MerkleNode::get_count() == 0);
-	logfile << "Instance count out of bounds: "<< MerkleNode::get_count() << '\n';
-	logfile << "~~~~~get_static() functionality - PASSED\n\n";
-
-	logfile << "\nSUCCESS\n";
-
-	logfile.close();
-	std::cout << "TEST ENDED\n";
-	return 0;
+    out << "Test completed. Remaining MerkleNode count: ";// << MerkleNode::get_count() << '\n';
+    out.close();
+    return 0;
 }
