@@ -1,50 +1,13 @@
 // Author: Augustinas Bickaitis, 2025
 
 // An append-only MerkleContainer, with a functionality to 
-//				create static trees by returning a root MerkleNode
+//				make snapshot tree (MerkleTree)
 	
 
 // NEED TO HAVE OPEN SSL LIBRARY INSTALLED!!
 
+// Basic use is demonstrated on main.cpp
 
-/*
-//~~~~~~~~~~~~~BASIC USE~~~~~~~~~~~
-
-using namespace MyMerkle;
-
-MerkleContainer* tree = new MerkleContainer(); // Creates an empty append-only Merkle container
-
-tree->add("string1");  // Adds hash value of "string1" to the tree
-tree->add("string2");  // Adds hash value of "string2"
-
-MerkleTree static1 = tree->get_tree(); 
-// .get_tree() returns a MerkleTree representing a view-only snapshot of the current state
-
-tree->add("string3");  // Append more data
-
-MerkleTree static2 = tree->get_tree(); 
-// static1 and static2 have different root hashes due to the new data
-
-//~~~~~~~~~~~~~~CHECKING~~~~~~~~~~
-
-tree->empty();       // Returns true if the container has no elements
-tree->get_size();    // Returns number of added elements (leaf count)
-
-static1.get_height(); // Returns height of the tree
-static1.get_root_hash(); // Returns root hash of the tree
-
-//~~~~~~~~~~~TRAVERSING STATIC TREE~~~~~~~
-
-auto root = static1.get_root(); // Returns a shared_ptr<MerkleNode> to the root
-
-if (root->get_height() > 0) {
-    auto left = root->get_left();  // Returns shared_ptr<MerkleNode> to left child
-    auto right = root->get_right(); // Returns shared_ptr<MerkleNode> to right child
-    // Throws MerkleExcept if called on a leaf node (height == 0)
-}
-
-delete tree; // Don't forget to free memory.
-*/
 #include <memory> //shared and unique ptr
 #include <iomanip> // hex function for line formating
 #include <cmath>  // for pow()
@@ -88,7 +51,7 @@ class MerkleTree {
 		bool operator!=(const MerkleTree& other);
 	    
 	    std::string get_root_hash() const;
-	    int get_height() const;
+	    int get_height() const; // 0 if only root node
 	    int get_size() const;
 
 	private:
@@ -105,7 +68,6 @@ class MerkleTree {
 		MerkleContainer(MerkleContainer&& other) noexcept;	
 		
 		~MerkleContainer();
-
 
 		MerkleContainer& operator=(const MerkleContainer& other);
 	    MerkleContainer& operator=(MerkleContainer&& other) noexcept;
